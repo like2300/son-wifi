@@ -1,0 +1,7 @@
+pyaudiowpatch
+aiohttp
+numpy
+qrcode
+pillow
+flet
+flet-desktop

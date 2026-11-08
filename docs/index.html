@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Son Wi-Fi — le son du PC sur ton téléphone</title>
+<meta name="description" content="Écoute le son de ton PC Windows sur ton iPhone par le Wi-Fi. Gratuit, open source, sans installation sur le téléphone.">
+<link rel="icon" href="favicon.png">
+<meta property="og:title" content="Son Wi-Fi">
+<meta property="og:description" content="Le son du PC sur ton téléphone, par le Wi-Fi. Gratuit et open source.">
+<meta property="og:image" content="icon.png">
+<style>
+:root{
+  --fond:#0B1220; --carte:#121A2B; --bord:#1E293B; --texte:#E2E8F0; --texte2:#94A3B8;
+  --bleu:#3B82F6; --bleu2:#38BDF8; --vert:#22C55E;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,sans-serif;background:var(--fond);color:var(--texte);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+/* Barre du haut */
+nav{position:sticky;top:0;z-index:10;backdrop-filter:blur(14px);background:rgba(11,18,32,.75);border-bottom:1px solid rgba(30,41,59,.6)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.marque{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px}
+.marque img{width:32px;height:32px}
+nav .liens{display:flex;gap:26px;font-size:14px;color:var(--texte2)}
+nav .liens a:hover{color:var(--texte)}
+
+/* Héros */
+.heros{position:relative;overflow:hidden;padding:90px 0 70px}
+.heros::before{content:"";position:absolute;inset:-40% -10% auto;height:620px;background:radial-gradient(closest-side,rgba(59,130,246,.28),transparent 70%);pointer-events:none}
+.heros .wrap{position:relative;display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center}
+.badge{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--bleu2);background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.25);padding:6px 14px;border-radius:999px;margin-bottom:22px}
+.badge i{width:8px;height:8px;border-radius:50%;background:var(--vert);box-shadow:0 0 10px var(--vert)}
+h1{font-size:clamp(38px,5.4vw,62px);line-height:1.05;letter-spacing:-.02em;font-weight:800}
+h1 em{font-style:normal;background:linear-gradient(120deg,var(--bleu2),var(--bleu));-webkit-background-clip:text;background-clip:text;color:transparent}
+.heros p.sous{font-size:19px;color:var(--texte2);margin:22px 0 34px;max-width:520px}
+.boutons{display:flex;gap:14px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:16px;padding:15px 26px;border-radius:14px;transition:transform .15s,box-shadow .15s,background .15s}
+.btn svg{width:20px;height:20px}
+.btn.principal{color:#fff;background:linear-gradient(135deg,var(--bleu2),var(--bleu));box-shadow:0 12px 30px -10px rgba(59,130,246,.7)}
+.btn.principal:hover{transform:translateY(-2px);box-shadow:0 16px 36px -10px rgba(59,130,246,.8)}
+.btn.second{background:var(--carte);border:1px solid var(--bord)}
+.btn.second:hover{background:#18233a}
+.petit{font-size:13px;color:var(--texte2);margin-top:14px}
+.capture{justify-self:center;position:relative}
+.capture img{width:330px;max-width:100%;border-radius:18px;border:1px solid var(--bord);box-shadow:0 40px 80px -30px rgba(0,0,0,.8),0 0 0 8px rgba(18,26,43,.6)}
+.capture::after{content:"";position:absolute;inset:auto -30px -30px;height:120px;background:radial-gradient(closest-side,rgba(59,130,246,.35),transparent);z-index:-1}
+
+/* Sections */
+section{padding:80px 0}
+.titre{text-align:center;max-width:620px;margin:0 auto 50px}
+.titre small{color:var(--bleu2);font-weight:700;font-size:13px;letter-spacing:.12em;text-transform:uppercase}
+h2{font-size:clamp(28px,3.6vw,40px);letter-spacing:-.015em;margin:8px 0 12px;line-height:1.15}
+.titre p{color:var(--texte2);font-size:17px}
+
+.grille{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.carte{background:var(--carte);border:1px solid var(--bord);border-radius:18px;padding:26px;transition:border-color .2s,transform .2s}
+.carte:hover{border-color:rgba(59,130,246,.45);transform:translateY(-3px)}
+.carte .ico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:rgba(59,130,246,.12);color:var(--bleu2);margin-bottom:16px;font-size:22px}
+.carte h3{font-size:17px;margin-bottom:6px}
+.carte p{color:var(--texte2);font-size:14.5px}
+
+.etapes{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;counter-reset:e}
+.etape{position:relative;padding:30px 26px;border-radius:18px;background:linear-gradient(180deg,#121A2B,#0E1626);border:1px solid var(--bord)}
+.etape::before{counter-increment:e;content:counter(e);display:grid;place-items:center;width:38px;height:38px;border-radius:50%;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--bleu2),var(--bleu));margin-bottom:16px}
+.etape h3{font-size:18px;margin-bottom:6px}
+.etape p{color:var(--texte2);font-size:14.5px}
+
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.mode{border-radius:18px;padding:26px;background:var(--carte);border:1px solid var(--bord);text-align:center}
+.mode.vedette{border-color:rgba(59,130,246,.6);box-shadow:0 0 0 1px rgba(59,130,246,.25),0 20px 40px -20px rgba(59,130,246,.5)}
+.mode .em{font-size:34px}
+.mode h3{margin:8px 0 4px}
+.mode .debit{color:var(--bleu2);font-weight:700;font-size:14px;margin-bottom:10px}
+.mode p{color:var(--texte2);font-size:14.5px}
+
+.faq{max-width:760px;margin:0 auto}
+details{background:var(--carte);border:1px solid var(--bord);border-radius:14px;padding:18px 22px;margin-bottom:12px}
+summary{cursor:pointer;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::after{content:"+";color:var(--bleu2);font-size:20px;line-height:1}
+details[open] summary::after{content:"–"}
+details p{color:var(--texte2);margin-top:10px;font-size:15px}
+code{font-family:Consolas,monospace;background:#0B1220;border:1px solid var(--bord);padding:2px 7px;border-radius:6px;font-size:13.5px}
+
+.final{text-align:center;padding:70px 30px;border-radius:26px;background:radial-gradient(circle at 50% 0,rgba(59,130,246,.25),transparent 60%),var(--carte);border:1px solid var(--bord)}
+.final h2{margin-bottom:10px}
+.final p{color:var(--texte2);margin-bottom:28px}
+.final .boutons{justify-content:center}
+
+footer{padding:40px 0;border-top:1px solid var(--bord);color:var(--texte2);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+footer a:hover{color:var(--texte)}
+
+@media (max-width:860px){
+  .heros .wrap{grid-template-columns:1fr;text-align:center}
+  .heros p.sous{margin-left:auto;margin-right:auto}
+  .boutons{justify-content:center}
+  .grille,.etapes,.modes{grid-template-columns:1fr}
+  nav .liens{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="marque" href="#"><img src="icon.png" alt="">Son Wi-Fi</a>
+    <div class="liens">
+      <a href="#fonctions">Fonctions</a>
+      <a href="#comment">Comment ça marche</a>
+      <a href="#modes">Modes</a>
+      <a href="#faq">FAQ</a>
+      <a href="https://github.com/__DEPOT__">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<header class="heros">
+  <div class="wrap">
+    <div>
+      <span class="badge"><i></i> Gratuit · Open source · Windows</span>
+      <h1>Le son de ton PC,<br><em>sur ton téléphone.</em></h1>
+      <p class="sous">Son Wi-Fi envoie le son de Windows vers ton iPhone par le Wi-Fi. Rien à installer sur le téléphone : tu scannes le QR code, tu appuies sur Écouter, c'est tout.</p>
+      <div class="boutons">
+        <a class="btn principal" href="https://github.com/__DEPOT__/releases/latest/download/SonWifi.exe">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+          Télécharger pour Windows
+        </a>
+        <a class="btn second" href="https://github.com/__DEPOT__">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.6 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5Z"/></svg>
+          Code source
+        </a>
+      </div>
+      <p class="petit">Windows 10 / 11 · iPhone, Android, tablette · Gratuit, sans compte</p>
+    </div>
+    <div class="capture"><img src="capture.png" alt="Capture de l'application Son Wi-Fi : QR code, adresse et bouton Arrêter"></div>
+  </div>
+</header>
+
+<section id="fonctions">
+  <div class="wrap">
+    <div class="titre">
+      <small>Fonctions</small>
+      <h2>Simple à utiliser, solide sous le capot</h2>
+      <p>Tout ce qu'il faut pour écouter ton PC sans fil, sans coupure et sans réglage.</p>
+    </div>
+    <div class="grille">
+      <div class="carte"><div class="ico">📷</div><h3>QR code instantané</h3><p>L'appli démarre le serveur toute seule et affiche un QR code. Tu le scannes avec l'appareil photo, c'est connecté.</p></div>
+      <div class="carte"><div class="ico">📶</div><h3>Qualité adaptative</h3><p>Comme une vidéo en streaming : 6 niveaux de 96 à 1536 kb/s. La qualité baisse si le Wi-Fi rame et remonte quand il va mieux.</p></div>
+      <div class="carte"><div class="ico">🎧</div><h3>Coupures masquées</h3><p>Si un paquet arrive en retard, un son de remplacement et des fondus enchaînés comblent le trou. Pas de clic, pas de silence brutal.</p></div>
+      <div class="carte"><div class="ico">⚖️</div><h3>Mode Stable intelligent</h3><p>Trouve tout seul la meilleure qualité qui ne coupe jamais, puis se verrouille dessus. Il ignore les petites variations du réseau.</p></div>
+      <div class="carte"><div class="ico">🔆</div><h3>Écran toujours allumé</h3><p>Un bouton empêche le téléphone de se mettre en veille, pour que le son ne s'arrête pas quand l'écran s'éteint.</p></div>
+      <div class="carte"><div class="ico">🔓</div><h3>Libre et local</h3><p>Aucun compte, aucun cloud : le son reste sur ton réseau Wi-Fi. Le code est open source, sous licence MIT.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="comment">
+  <div class="wrap">
+    <div class="titre">
+      <small>Comment ça marche</small>
+      <h2>Prêt en 10 secondes</h2>
+      <p>Le PC et le téléphone doivent juste être sur le même Wi-Fi.</p>
+    </div>
+    <div class="etapes">
+      <div class="etape"><h3>Lance Son Wi-Fi</h3><p>Ouvre <code>SonWifi.exe</code>. Le serveur démarre tout seul et le QR code apparaît.</p></div>
+      <div class="etape"><h3>Scanne le QR code</h3><p>Avec l'appareil photo du téléphone. La page s'ouvre dans le navigateur, sans rien installer.</p></div>
+      <div class="etape"><h3>Appuie sur Écouter</h3><p>Le son du PC (musique, vidéos, jeux…) sort maintenant de ton téléphone ou de tes écouteurs.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="modes">
+  <div class="wrap">
+    <div class="titre">
+      <small>Modes</small>
+      <h2>Choisis ton équilibre</h2>
+      <p>Un sélecteur sur le téléphone, trois façons d'écouter.</p>
+    </div>
+    <div class="modes">
+      <div class="mode"><div class="em">🐢</div><h3>Faible</h3><div class="debit">96 – 192 kb/s</div><p>Économise le Wi-Fi. Idéal si le réseau est chargé ou loin de la box.</p></div>
+      <div class="mode vedette"><div class="em">⚖️</div><h3>Stable</h3><div class="debit">Automatique</div><p>Le mode par défaut. Trouve la meilleure qualité qui tient, et ne bouge plus.</p></div>
+      <div class="mode"><div class="em">💎</div><h3>HD</h3><div class="debit">768 – 1536 kb/s</div><p>Qualité maximale, son sans perte, avec une grande réserve anti-coupure.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="titre"><small>FAQ</small><h2>Questions fréquentes</h2></div>
+    <div class="faq">
+      <details><summary>Faut-il installer une appli sur le téléphone ?</summary><p>Non. Tout se passe dans le navigateur (Safari, Chrome…). Il suffit de scanner le QR code.</p></details>
+      <details><summary>Ça marche avec Android ?</summary><p>Oui : tout téléphone, tablette ou ordinateur avec un navigateur récent peut écouter. Plusieurs appareils peuvent se connecter en même temps.</p></details>
+      <details><summary>Quel est le délai entre le PC et le téléphone ?</summary><p>Environ 0,1 à 0,3 seconde selon le Wi-Fi et le mode. Parfait pour la musique et les vidéos ; pour les jeux très rapides, un léger décalage peut se sentir.</p></details>
+      <details><summary>Windows affiche un avertissement au lancement</summary><p>L'exécutable n'est pas signé (c'est payant). Clique sur « Informations complémentaires » puis « Exécuter quand même ». Le code source est public si tu veux vérifier ou compiler toi-même.</p></details>
+      <details><summary>Le pare-feu demande une autorisation</summary><p>C'est normal : le téléphone doit pouvoir joindre le PC. Autorise Son Wi-Fi sur les <strong>réseaux privés</strong>.</p></details>
+      <details><summary>Je veux le lancer depuis le code source</summary><p><code>pip install -r requirements.txt</code> puis <code>python app.py</code> (interface) ou <code>python son_wifi.py</code> (terminal).</p></details>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="final">
+      <h2>Libère le son de ton PC</h2>
+      <p>Gratuit, open source, et prêt en quelques secondes.</p>
+      <div class="boutons">
+        <a class="btn principal" href="https://github.com/__DEPOT__/releases/latest/download/SonWifi.exe">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+          Télécharger SonWifi.exe
+        </a>
+        <a class="btn second" href="https://github.com/__DEPOT__">Voir sur GitHub</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© Son Wi-Fi — licence MIT</span>
+    <span><a href="https://github.com/__DEPOT__">GitHub</a> · <a href="https://github.com/__DEPOT__/issues">Signaler un problème</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
