@@ -5,8 +5,8 @@
 Rien à installer sur le téléphone : tu scannes le QR code, tu appuies sur Écouter.</p>
 
 <p align="center">
-  <a href="https://__PAGES__">🌐 Site</a> ·
-  <a href="https://github.com/__DEPOT__/releases/latest/download/SonWifi.exe">⬇️ Télécharger SonWifi.exe</a>
+  <a href="https://like2300.github.io/son-wifi/">🌐 Site</a> ·
+  <a href="https://github.com/like2300/son-wifi/releases/latest/download/SonWifi.exe">⬇️ Télécharger SonWifi.exe</a>
 </p>
 
 <p align="center"><img src="docs/capture.png" width="320" alt="Capture de l'application"></p>
